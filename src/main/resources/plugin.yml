@@ -1,0 +1,8 @@
+name: SolidPets
+version: ${project.version}
+main: me.grsan.solidpets.SolidPets
+api-version: 1.13
+prefix: SP
+load: STARTUP
+authors: [Grsan]
+description: A new take on pets!
