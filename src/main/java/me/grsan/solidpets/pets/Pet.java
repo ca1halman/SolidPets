@@ -7,10 +7,13 @@ import me.grsan.solidpets.util.PlayerUtil;
 import me.grsan.solidpets.util.Rarity;
 import net.minecraft.server.v1_15_R1.EntityPlayer;
 import net.minecraft.server.v1_15_R1.IChatBaseComponent;
-import org.bukkit.OfflinePlayer;
+import net.minecraft.server.v1_15_R1.World;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 import org.json.simple.JSONObject;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
 public class Pet {
@@ -19,38 +22,26 @@ public class Pet {
     private OfflinePlayer owner;
     private Rarity rarity;
 
+    private String petClassName;
+
     private UUID uuid;
 
-    private boolean active = true;
+    private boolean active = false;
 
     /**
      * The base pet constructor
      * You shouldn't be using this ctor outside of testing
+     * This is what is used to load the pets
      * @param owner The owner of the pet
      * @param rarity The pet rarity, will determine certain factors
      * @param uuid The pet uuid
      */
-    public Pet(OfflinePlayer owner, Rarity rarity, UUID uuid) {
-        EntityPlayer ep = PlayerUtil.toEntityPlayer(owner);
-
-        this.petEntity = new PigPetEntity(ep.getWorld(), owner);
-        PlayerUtil.toEntityPlayer(owner).getWorld().addEntity(this.petEntity);
-
-        petEntity.setCustomName(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + petEntity.getName() + "\"}"));
-        petEntity.setCustomNameVisible(true);
-
+    public Pet(OfflinePlayer owner, Rarity rarity, UUID uuid, String petClassName) {
         this.owner = owner;
         this.rarity = rarity;
         this.uuid = uuid;
-    }
 
-    /**
-     * For loading a pet from a config file - pass pet uuid, this will fill in other info
-     * @param uuid The UUID
-     */
-    public Pet(UUID uuid) {
-        //note that this ctor is not implemented yet, and will obtain info from a json file
-        this(SolidPets.getInstance().getServer().getOfflinePlayer(UUID.randomUUID()), Rarity.COMMON, uuid);
+        this.petClassName = petClassName;
     }
 
     /**
@@ -58,19 +49,57 @@ public class Pet {
      * @param owner The owner of the pet
      * @param rarity The pet rarity, will determine certain factors
      */
-    public Pet(OfflinePlayer owner, Rarity rarity) {
-        this(owner, rarity, UUID.randomUUID());
+    public Pet(OfflinePlayer owner, Rarity rarity, String petClass) {
+        this(owner, rarity, UUID.randomUUID(), petClass);
+    }
+
+    public void createPetEntity() {
+        EntityPlayer ep = PlayerUtil.toEntityPlayer(owner);
+
+        try {
+            Class<?> petClass = Class.forName("me.grsan.solidpets.pets.entity." + petClassName);
+            Constructor<?> petClassConstructor = petClass.getConstructor(World.class, OfflinePlayer.class);
+            this.petEntity = (PetEntity) petClassConstructor.newInstance(ep.getWorld(), owner);
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            this.petEntity = new PigPetEntity(ep.getWorld(), owner);
+        }
+
+        petEntity.setCustomName(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + petEntity.getName() + "\"}"));
+        petEntity.setCustomNameVisible(true);
+    }
+
+    public void updateVisbility() {
+        if (petEntity == null && owner.getPlayer() != null)
+            createPetEntity();
+
+        if (active) {
+            if (owner.getPlayer() != null) {
+                owner.getPlayer().playSound(owner.getPlayer().getLocation(), Sound.ENTITY_ITEM_PICKUP, 1,1);
+                Location ownerLocaiton = owner.getPlayer().getLocation();
+                petEntity.setPosition(ownerLocaiton.getX(), ownerLocaiton.getY(), ownerLocaiton.getZ());
+            }
+            this.petEntity.dead = false;
+            PlayerUtil.toEntityPlayer(owner).getWorld().addEntity(this.petEntity);
+        } else
+            petEntity.getBukkitEntity().remove();
     }
 
     public void toggleActive() {
         active = !active;
-        if (active)
-            PlayerUtil.toEntityPlayer(owner).getWorld().addEntity(this.petEntity);
-        else
-            petEntity.getBukkitEntity().remove();
+
+        updateVisbility();
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+
+        updateVisbility();
     }
 
     public PetEntity getPetEntity() {
+        if (petEntity == null && owner.getPlayer() != null)
+            createPetEntity();
         return petEntity;
     }
 
@@ -101,8 +130,8 @@ public class Pet {
     @SuppressWarnings("unchecked")
     public JSONObject serialize() {
         JSONObject json = new JSONObject();
-        json.put("player-uuid", owner.getUniqueId().toString());
-        json.put("pet-rarity", rarity.toString());
+        json.put("rarity", rarity.toString());
+        json.put("type", petEntity.getClass().getName());
 
         return json;
     }

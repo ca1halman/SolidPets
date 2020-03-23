@@ -47,9 +47,10 @@ public class PigPetEntity extends PetEntity {
 
     @Override
     public void applyPathfinders() {
+        this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(2, new PathfinderGoalRandomLookaround(this));
-        this.goalSelector.a(1, new PathfinderGoalFloat(this));
-        this.goalSelector.a(0, new PathfinderGoalFollowPlayer(this,PlayerUtil.toEntityPlayer(getOwner()), 1, 2, 5));
+
+        this.targetSelector.a(0, new PathfinderGoalFollowPlayer(this,PlayerUtil.toEntityPlayer(getOwner()), 1.4f, 2f, 3.5f));
     }
 
     @Override
@@ -59,6 +60,6 @@ public class PigPetEntity extends PetEntity {
 
     @Override
     public String getName() {
-        return getOwner().getName() + "'s PigPet";
+        return getOwner().getName() + "'s Pig Pet";
     }
 }

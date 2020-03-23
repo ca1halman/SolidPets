@@ -9,3 +9,5 @@ description: A new take on pets!
 commands:
   summonTestPet:
     usage: /summonTestPet
+  togglePet:
+    usage: /togglePet [id]
