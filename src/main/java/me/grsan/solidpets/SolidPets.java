@@ -1,6 +1,7 @@
 package me.grsan.solidpets;
 
 import me.grsan.solidpets.pets.Pet;
+import me.grsan.solidpets.pets.entity.EntityRegistry;
 import me.grsan.solidpets.util.Rarity;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -33,6 +34,7 @@ public final class SolidPets extends JavaPlugin {
     @Override
     public void onLoad() {
         //this isn't the best way but i figured id try something different
+        EntityRegistry.registerEntities();
     }
 
     @Override

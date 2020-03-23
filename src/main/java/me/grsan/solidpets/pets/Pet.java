@@ -6,7 +6,9 @@ import me.grsan.solidpets.pets.entity.PigPetEntity;
 import me.grsan.solidpets.util.PlayerUtil;
 import me.grsan.solidpets.util.Rarity;
 import net.minecraft.server.v1_15_R1.EntityPlayer;
+import net.minecraft.server.v1_15_R1.IChatBaseComponent;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 import org.json.simple.JSONObject;
 
 import java.util.UUID;
@@ -31,7 +33,12 @@ public class Pet {
     public Pet(OfflinePlayer owner, Rarity rarity, UUID uuid) {
         EntityPlayer ep = PlayerUtil.toEntityPlayer(owner);
 
-        this.petEntity = new PigPetEntity(ep.getWorld());
+        this.petEntity = new PigPetEntity(ep.getWorld(), owner);
+        PlayerUtil.toEntityPlayer(owner).getWorld().addEntity(this.petEntity);
+
+        petEntity.setCustomName(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + petEntity.getName() + "\"}"));
+        petEntity.setCustomNameVisible(true);
+
         this.owner = owner;
         this.rarity = rarity;
         this.uuid = uuid;
@@ -58,7 +65,7 @@ public class Pet {
     public void toggleActive() {
         active = !active;
         if (active)
-            petEntity = new PigPetEntity(PlayerUtil.toEntityPlayer(owner).getWorld());
+            PlayerUtil.toEntityPlayer(owner).getWorld().addEntity(this.petEntity);
         else
             petEntity.getBukkitEntity().remove();
     }

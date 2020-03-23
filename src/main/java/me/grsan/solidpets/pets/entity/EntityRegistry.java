@@ -38,6 +38,8 @@ public enum EntityRegistry {
 
         EntityTypes.a<Entity> e = EntityTypes.a.a(entity.getB_types(), EnumCreatureType.CREATURE);
         IRegistry.a(IRegistry.ENTITY_TYPE, entity.getRegistryName(), e.a(entity.getRegistryName()));
+
+        System.out.println("Registered: " + entity.getRegistryName());
     }
 
     public String getRegistryName() {
