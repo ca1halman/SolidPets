@@ -32,9 +32,6 @@ public abstract class PetEntity extends EntityInsentient {
         this.type = type;
     }
 
-    //Thanks https://www.spigotmc.org/threads/clearing-pathfinder-goals-in-minecraft-1-14.371282/ for this fix
-    //I copied & pasted to save time
-    //and Updated to 1.15.2
     @SuppressWarnings("rawtypes")
     protected void clearGoals() {
 
