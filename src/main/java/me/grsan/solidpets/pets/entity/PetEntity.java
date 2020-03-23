@@ -1,40 +1,34 @@
 package me.grsan.solidpets.pets.entity;
 
 import net.minecraft.server.v1_15_R1.*;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.ArrayList;
 
+//There is no reason for this class being abstract other than for it to stand out in my ide better
 public abstract class PetEntity extends EntityCreature {
 
     interface Action {
         void execute(LivingEntity entity);
     }
 
-    private boolean sitting = false;
     private boolean active = false;
     private ArrayList<Action> actions = new ArrayList<>();
 
-    private String registryName;
     private EntityTypes<?> type;
-    private World world;
 
-    //TODO: Make setting this easier & cleaner
-    EntityTypes.b<Entity> b_types;
+    private OfflinePlayer owner;
 
-    public PetEntity(String registryName, EntityTypes<? extends EntityCreature> type, World world) {
+    public PetEntity(EntityTypes<? extends EntityCreature> type, World world) {
         super(type, world);
-        this.registryName = registryName;
         this.type = type;
-        this.world = world;
 
-        this.setCustomName(IChatBaseComponent.ChatSerializer.a(this.getRegistryName()));
+        this.setCustomName(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + getName() + "\"}"));
         this.setCustomNameVisible(true);
         this.attachedToPlayer = true;
+        this.setNoAI(false);
     }
-
-    public abstract void toggleSitting();
-    public abstract void toggleActive();
 
     public void doAction(int actionIndex){
         Action action = actions.get(actionIndex);
@@ -45,15 +39,23 @@ public abstract class PetEntity extends EntityCreature {
         actions.add(a);
     }
 
+    @Override
+    public void b(NBTTagCompound var0) {
+        super.b(var0);
+        var0.setString("id",getRegistryName());
+        if (owner != null)
+            var0.setString("owner",owner.getUniqueId().toString());
+    }
+
     public String getRegistryName() {
-        return registryName;
+        return "basic_pet";
     }
 
     public EntityTypes<?> getType() {
         return type;
     }
 
-    public EntityTypes.b<Entity> getB_types() {
-        return b_types;
+    public void setOwner(OfflinePlayer owner) {
+        this.owner = owner;
     }
 }

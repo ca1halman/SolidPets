@@ -6,7 +6,7 @@
 
     <groupId>me.grsan</groupId>
     <artifactId>SolidPets</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1.2</version>
     <packaging>jar</packaging>
 
     <name>SolidPets</name>

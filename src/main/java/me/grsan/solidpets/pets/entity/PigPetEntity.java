@@ -2,32 +2,26 @@ package me.grsan.solidpets.pets.entity;
 
 import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityTypes;
-import net.minecraft.server.v1_15_R1.IChatBaseComponent;
 import net.minecraft.server.v1_15_R1.World;
 
-public class TestPetEntity extends PetEntity {
+public class PigPetEntity extends PetEntity {
 
-    public TestPetEntity(World world) {
-        super("test_pet", EntityTypes.PIG,world);
+    public PigPetEntity(World world) {
+        super(EntityTypes.PIG,world);
 
-        this.b_types = TestPetEntity::new;
         addAction(entity -> {
+            System.out.println("Executed Action!");
             entity.setVelocity(entity.getLocation().getDirection().setY(0.15));
         });
     }
 
-    public TestPetEntity(EntityTypes<Entity> entityEntityTypes, World world) {
+    public PigPetEntity(EntityTypes<Entity> entityEntityTypes, World world) {
         this(world);
     }
 
     @Override
-    public void toggleSitting() {
-
-    }
-
-    @Override
-    public void toggleActive() {
-
+    public String getRegistryName() {
+        return "pig_pet";
     }
 
     @Override

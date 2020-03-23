@@ -6,3 +6,6 @@ prefix: SP
 load: STARTUP
 authors: [Grsan]
 description: A new take on pets!
+commands:
+  summonTestPet:
+    usage: /summonTestPet
