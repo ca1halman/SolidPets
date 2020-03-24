@@ -40,6 +40,7 @@ test commands*
 
 ### Found a bug? Want a new feature?
 Please create an issue if you find a bug, or have a feature request
+
 ---
 <sub>This project is licensed under GNU GPL-v3</sub>
 
