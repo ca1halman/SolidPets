@@ -30,7 +30,6 @@ public class PigPetEntity extends PetEntity {
             setPosition(ownerLocation.getX(), ownerLocation.getY(), ownerLocation.getZ());
         }
 
-        this.goalSelector.doTick();
         applyPathfinders();
     }
 

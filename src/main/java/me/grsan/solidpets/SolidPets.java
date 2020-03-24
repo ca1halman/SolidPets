@@ -50,12 +50,13 @@ public final class SolidPets extends JavaPlugin {
             Player p = (Player) sender;
             if (!playerPets.containsKey(p))
                 playerPets.put(p, new ArrayList<>());
-            playerPets.get(p).add(new Pet(p, Rarity.COMMON, "PigPetEntity"));
+            playerPets.get(p).add(new Pet(p, Rarity.COMMON, args[0]));
 
             return true;
 
         });
 
+        //TODO: make this command better / integrate into a gui
         getCommand("togglePet").setExecutor((sender, command, label, args) -> {
 
             if (!(sender instanceof Player)) {
@@ -88,7 +89,6 @@ public final class SolidPets extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        //this isn't the best way but i figured id try something different
         EntityRegistry.registerEntities();
     }
 

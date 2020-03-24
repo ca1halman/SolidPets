@@ -18,13 +18,13 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.logging.Level;
 
+//Note that this class doesn't have methods for stuff I'm not using - because it was custom made for this Plugin
+//I'll have a more general one eventually, probably in a core API
 public class Config {
 
     private File configFile;
     private JSONObject configJson;
     private JSONParser jsonParser;
-
-    private HashMap<String, Object> defaultJson = new HashMap<>();
 
     public Config(File configFile) throws FileNotFoundException, UnsupportedEncodingException {
         this.configFile = configFile;
@@ -73,6 +73,8 @@ public class Config {
         return configJson;
     }
 
+    //I hate everything about the following two methods
+    //Let me know if there is a better way - I programmed this at 2am and it works so I'm just not gonna worry about it for now
     public HashMap<OfflinePlayer, ArrayList<Pet>> getPlayerPets() {
         HashMap<OfflinePlayer, ArrayList<Pet>> ret = new HashMap<>();
         JSONArray ownerArray = (JSONArray)configJson.get("owners");
